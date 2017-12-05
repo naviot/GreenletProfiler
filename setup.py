@@ -1,7 +1,6 @@
 import os
 import sys
 from distutils.ccompiler import new_compiler
-from setuptools import Extension
 from setuptools import setup
 
 # Hack to silence atexit traceback in newer python versions.
@@ -25,21 +24,6 @@ if os.name == 'posix' and sys.platform != 'darwin':
     if compiler.has_function('timer_create', libraries=('rt',)):
         user_macros.append(('LIB_RT_AVAILABLE', '1'))
         user_libraries.append('rt')
-
-yappi_extension = Extension(
-    '_GreenletProfiler_yappi',
-    sources=[
-        '_vendorized_yappi/_yappi.c',
-        '_vendorized_yappi/callstack.c',
-        '_vendorized_yappi/hashtab.c',
-        '_vendorized_yappi/mem.c',
-        '_vendorized_yappi/freelist.c',
-        '_vendorized_yappi/timing.c'],
-    include_dirs=['_vendorized_yappi'],
-    define_macros=user_macros,
-    libraries=user_libraries,
-    extra_compile_args=compile_args,
-    extra_link_args=link_args)
 
 # End of setup code adapted from yappi.
 
@@ -72,11 +56,8 @@ setup(
     packages=packages,
     # Include Yappi's C extension, _yappi.so, which we've renamed to
     # _GreenletProfiler_yappi.so.
-    ext_modules=[yappi_extension],
     # Include yappi.py along with our own GreenletProfiler.py.
     py_modules=[
-        '_vendorized_yappi/yappi',
-        '_vendorized_yappi/__init__',
         'GreenletProfiler'],
     description=description,
     long_description=long_description,

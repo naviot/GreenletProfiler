@@ -2,9 +2,8 @@ import os
 import sys
 
 import greenlet
-
-import _vendorized_yappi
-from _vendorized_yappi.yappi import (
+import yappi
+from yappi import (
     is_running, convert2pstats, get_func_stats, get_thread_stats, clear_stats,
     set_clock_type, get_clock_type, get_mem_usage)
 
@@ -26,13 +25,13 @@ def start(builtins=False, profile_threads=True):
       calling thread.
     """
     # TODO: what about builtins False or profile_threads False?
-    _vendorized_yappi.yappi.set_context_id_callback(
+    yappi.set_context_id_callback(
         lambda: greenlet and id(greenlet.getcurrent()) or 0)
 
-    _vendorized_yappi.yappi.set_context_name_callback(
+    yappi.set_context_name_callback(
         lambda: greenlet and greenlet.getcurrent().__class__.__name__ or '')
 
-    _vendorized_yappi.yappi.start(builtins, profile_threads)
+    yappi.start(builtins, profile_threads)
 
 
 def stop():
@@ -40,8 +39,8 @@ def stop():
 
     The same profiling session can be resumed later by calling start().
     """
-    _vendorized_yappi.yappi.stop()
-    _vendorized_yappi.yappi.set_context_id_callback(None)
+    yappi.stop()
+    yappi.set_context_id_callback(None)
 
 
 def main():
